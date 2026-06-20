@@ -1,297 +1,163 @@
 "use client";
 
 import { useState } from "react";
-
 import { authClient } from "@/lib/auth-client";
-
 import { toast } from "react-toastify";
-
 import { useRouter } from "next/navigation";
-
 import Link from "next/link";
 
-import {
-    FaUserAlt,
-    FaEnvelope,
-    FaLock,
-    FaImage,
-    FaEye,
-    FaEyeSlash,
-} from "react-icons/fa";
+// HeroUI v3 Base Imports (No more Input bugs)
+import { Card, CardHeader, CardContent, CardFooter, Button } from "@heroui/react";
+
+// Gravity UI Icons
+import { Person, Envelope, Lock, Eye, EyeClosed, Picture } from "@gravity-ui/icons";
 
 export default function Register() {
-
     const [name, setName] = useState("");
-
     const [image, setImage] = useState("");
-
     const [email, setEmail] = useState("");
-
     const [password, setPassword] = useState("");
-
     const [showPassword, setShowPassword] = useState(false);
-
     const [loading, setLoading] = useState(false);
-
     const router = useRouter();
 
     const handleRegister = async (e) => {
-
         e.preventDefault();
 
-        // password validation
         if (password.length < 6) {
-
-            return toast.error(
-                "Password must be at least 6 characters"
-            );
+            return toast.error("Password must be at least 6 characters");
         }
-
         if (!/[A-Z]/.test(password)) {
-
-            return toast.error(
-                "Password must contain one uppercase letter"
-            );
+            return toast.error("Password must contain one uppercase letter");
         }
-
         if (!/[a-z]/.test(password)) {
-
-            return toast.error(
-                "Password must contain one lowercase letter"
-            );
+            return toast.error("Password must contain one lowercase letter");
         }
 
         try {
-
             setLoading(true);
-
-            const result = await authClient.signUp.email({
-
-                email,
-                password,
-                name,
-                image,
-
-            });
+            const result = await authClient.signUp.email({ email, password, name, image });
 
             if (result?.error) {
-
                 toast.error(result.error.message);
-
-                setLoading(false);
-
                 return;
             }
 
             toast.success("Registration successful!");
-
             router.push("/login");
-
-        }
-
-        catch (err) {
-
-            toast.error(
-                err?.message || "Registration failed"
-            );
-        }
-
-        finally {
-
+        } catch (err) {
+            toast.error(err?.message || "Registration failed");
+        } finally {
             setLoading(false);
         }
     };
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-[#050816] px-4 py-10">
+            <Card className="w-full max-w-md bg-[#0B1120] border border-white/10 p-8 shadow-2xl rounded-3xl">
+                <CardHeader className="flex flex-col items-center justify-center text-center pb-6">
+                    <h1 className="text-xl md:text-2xl font-bold text-orange-500">
+                        RecipeHub
 
-            <div className="w-full max-w-md bg-[#0B1120] border border-white/10 rounded-3xl shadow-2xl p-8">
-
-                {/* top */}
-                <div className="text-center mb-8">
-
-                    <h1 className="text-4xl font-black text-cyan-400">
-                        IdeaVault
                     </h1>
+                    <p className="text-gray-400 mt-2 text-sm">Create your startup journey account</p>
+                </CardHeader>
 
-                    <p className="text-gray-400 mt-3">
-                        Create your startup journey account
+                <CardContent className="space-y-6 overflow-visible">
+                    <form onSubmit={handleRegister} className="flex flex-col gap-5">
+
+                        {/* Full Name */}
+                        <div className="flex flex-col gap-1.5 w-full">
+                            <label className="text-sm font-semibold text-white">Full Name</label>
+                            <div className="relative flex items-center">
+                                <Person className="absolute left-4 text-gray-400 text-lg pointer-events-none" />
+                                <input
+                                    type="text"
+                                    placeholder="Enter your name"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    required
+                                    className="w-full bg-[#111827] border border-white/10 hover:border-cyan-400 focus:border-cyan-400 h-12 pl-12 pr-4 rounded-xl text-white placeholder:text-gray-500 outline-none transition"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Photo URL */}
+                        <div className="flex flex-col gap-1.5 w-full">
+                            <label className="text-sm font-semibold text-white">Photo URL</label>
+                            <div className="relative flex items-center">
+                                <Picture className="absolute left-4 text-gray-400 text-lg pointer-events-none" />
+                                <input
+                                    type="text"
+                                    placeholder="Paste your photo URL"
+                                    value={image}
+                                    onChange={(e) => setImage(e.target.value)}
+                                    required
+                                    className="w-full bg-[#111827] border border-white/10 hover:border-cyan-400 focus:border-cyan-400 h-12 pl-12 pr-4 rounded-xl text-white placeholder:text-gray-500 outline-none transition"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Email Address */}
+                        <div className="flex flex-col gap-1.5 w-full">
+                            <label className="text-sm font-semibold text-white">Email Address</label>
+                            <div className="relative flex items-center">
+                                <Envelope className="absolute left-4 text-gray-400 text-lg pointer-events-none" />
+                                <input
+                                    type="email"
+                                    placeholder="Enter your email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                    className="w-full bg-[#111827] border border-white/10 hover:border-cyan-400 focus:border-cyan-400 h-12 pl-12 pr-4 rounded-xl text-white placeholder:text-gray-500 outline-none transition"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Password */}
+                        <div className="flex flex-col gap-1.5 w-full">
+                            <label className="text-sm font-semibold text-white">Password</label>
+                            <div className="relative flex items-center">
+                                <Lock className="absolute left-4 text-gray-400 text-lg pointer-events-none" />
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="Enter your password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                    className="w-full bg-[#111827] border border-white/10 hover:border-cyan-400 focus:border-cyan-400 h-12 pl-12 pr-12 rounded-xl text-white placeholder:text-gray-500 outline-none transition"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-4 text-gray-400 hover:text-white transition focus:outline-none"
+                                >
+                                    {showPassword ? <EyeClosed className="text-lg" /> : <Eye className="text-lg" />}
+                                </button>
+                            </div>
+                            <div className="text-xs text-gray-400 mt-1.5 space-y-0.5 pl-1">
+                                <p>• Minimum 6 characters</p>
+                                <p>• At least one uppercase & lowercase letter</p>
+                            </div>
+                        </div>
+
+                        <Button
+                            type="submit"
+                            isPending={loading}
+                            className="w-full h-12 px-4 py-2 rounded-lg bg-orange-500  font-bold hover:underline ml-2 text-white font-semibold text-base rounded-xl transition mt-4 shadow-lg shadow-cyan-500/20"
+                        >
+                            {loading ? "Creating Account..." : "Register"}
+                        </Button>
+                    </form>
+                </CardContent>
+
+                <CardFooter className="flex justify-center pt-6 border-t border-white/5 mt-4">
+                    <p className="text-sm text-gray-400">
+                        Already have an account?
+                        <Link href="/login" className="text-cyan-400 font-bold hover:underline ml-2">Login</Link>
                     </p>
-
-                </div>
-
-                {/* form */}
-                <form
-                    onSubmit={handleRegister}
-                    className="space-y-5"
-                >
-
-                    {/* name */}
-                    <div>
-
-                        <label className="font-semibold text-white block mb-2">
-                            Full Name
-                        </label>
-
-                        <div className="relative">
-
-                            <FaUserAlt className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-
-                            <input
-                                type="text"
-                                placeholder="Enter your name"
-                                className="w-full bg-[#111827] border border-white/10 text-white pl-12 pr-4 h-12 rounded-xl outline-none focus:border-cyan-400 transition"
-
-                                onChange={(e) => setName(e.target.value)}
-
-                                required
-                            />
-
-                        </div>
-
-                    </div>
-
-                    {/* photo */}
-                    <div>
-
-                        <label className="font-semibold text-white block mb-2">
-                            Photo URL
-                        </label>
-
-                        <div className="relative">
-
-                            <FaImage className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-
-                            <input
-                                type="text"
-                                placeholder="Paste your photo URL"
-                                className="w-full bg-[#111827] border border-white/10 text-white pl-12 pr-4 h-12 rounded-xl outline-none focus:border-cyan-400 transition"
-
-                                onChange={(e) => setImage(e.target.value)}
-
-                                required
-                            />
-
-                        </div>
-
-                    </div>
-
-                    {/* email */}
-                    <div>
-
-                        <label className="font-semibold text-white block mb-2">
-                            Email Address
-                        </label>
-
-                        <div className="relative">
-
-                            <FaEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-
-                            <input
-                                type="email"
-                                placeholder="Enter your email"
-                                className="w-full bg-[#111827] border border-white/10 text-white pl-12 pr-4 h-12 rounded-xl outline-none focus:border-cyan-400 transition"
-
-                                onChange={(e) => setEmail(e.target.value)}
-
-                                required
-                            />
-
-                        </div>
-
-                    </div>
-
-                    {/* password */}
-                    <div>
-
-                        <label className="font-semibold text-white block mb-2">
-                            Password
-                        </label>
-
-                        <div className="relative">
-
-                            <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-
-                            <input
-                                type={showPassword ? "text" : "password"}
-                                placeholder="Enter your password"
-                                className="w-full bg-[#111827] border border-white/10 text-white pl-12 pr-12 h-12 rounded-xl outline-none focus:border-cyan-400 transition"
-
-                                onChange={(e) => setPassword(e.target.value)}
-
-                                required
-                            />
-
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    setShowPassword(!showPassword)
-                                }
-
-                                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
-                            >
-
-                                {
-                                    showPassword
-                                        ? <FaEyeSlash />
-                                        : <FaEye />
-                                }
-
-                            </button>
-
-                        </div>
-
-                        {/* password rules */}
-                        <div className="mt-3 text-sm text-gray-400 space-y-1">
-
-                            <p>
-                                • Minimum 6 characters
-                            </p>
-
-                            <p>
-                                • One uppercase letter
-                            </p>
-
-                            <p>
-                                • One lowercase letter
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                    {/* button */}
-                    <button
-                        disabled={loading}
-                        className="w-full h-12 rounded-xl text-lg font-semibold text-white bg-cyan-500 hover:bg-cyan-600 transition disabled:opacity-50"
-                    >
-
-                        {
-                            loading
-                                ? "Creating Account..."
-                                : "Register"
-                        }
-
-                    </button>
-
-                </form>
-
-                {/* login */}
-                <p className="text-center mt-6 text-gray-400">
-
-                    Already have an account?
-
-                    <Link
-                        href="/login"
-                        className="text-cyan-400 font-bold hover:underline ml-2"
-                    >
-                        Login
-                    </Link>
-
-                </p>
-
-            </div>
-
+                </CardFooter>
+            </Card>
         </div>
     );
 }
